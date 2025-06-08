@@ -76,7 +76,7 @@ class Voxelize:
 
     def __curvature_reflectance_region_ratio(self) -> float:
         points = self._cpu(self._pc[:, :3])
-        nbr = NearestNeighbors(n_neighbors=122).fit(points)
+        nbr = NearestNeighbors(n_neighbors=122, algorithm="kd_tree").fit(points)
         _, indices = nbr.kneighbors(points)
         curvatures = []
         for i in range(len(points)):
