@@ -47,7 +47,7 @@ class Voxelize:
 
     def __entropy_r(self) -> float:
         data = self._cpu(self._pc[:, 3])
-        hist, _ = np.histogram(data, bins=auto)
+        hist, _ = np.histogram(data, bins="auto")
         probs = hist / np.sum(hist)
         probs = probs[probs > 0]
         return float(entropy(probs, base=2))
