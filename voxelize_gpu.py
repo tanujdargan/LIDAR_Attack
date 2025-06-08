@@ -76,7 +76,7 @@ class Voxelize:
 
     def __curvature_reflectance_region_ratio(self) -> float:
         points = self._cpu(self._pc[:, :3])
-        nbr = NearestNeighbors(n_neighbors=122).fit(points)
+        nbr = NearestNeighbors(n_neighbors=122, algorithm="kd_tree").fit(points)
         _, indices = nbr.kneighbors(points)
         curvatures = []
         for i in range(len(points)):
@@ -110,14 +110,24 @@ class Voxelize:
         )
 
 
-def main(in_csv: str, out_csv: str, use_gpu: bool) -> None:
-    df = pd.read_csv(in_csv, header=0)
-    voxels = []
-    for fname in df['filename']:
-        pc = np.fromfile(fname, dtype=np.float32).reshape(-1, 4)
-        voxels.append(str(tuple(Voxelize(pc, use_gpu=use_gpu).voxel())))
-    df['voxel'] = voxels
-    df.to_csv(out_csv, index=False)
+def main(in_csv: str, out_csv: str, use_gpu: bool, batch_size: int = 100) -> None:
+    """Voxelize LiDAR files from *in_csv* writing results to *out_csv*.
+
+    Processing is done in batches so memory usage stays low even for very
+    large datasets.
+    """
+
+    reader = pd.read_csv(in_csv, header=0, chunksize=batch_size)
+    first = True
+    for chunk in reader:
+        voxels = []
+        for fname in chunk['filename']:
+            pc = np.fromfile(fname, dtype=np.float32).reshape(-1, 4)
+            voxels.append(str(tuple(Voxelize(pc, use_gpu=use_gpu).voxel())))
+        chunk['voxel'] = voxels
+        chunk.to_csv(out_csv, mode='w' if first else 'a', index=False,
+                     header=first)
+        first = False
     if use_gpu and not HAS_CUPY:
         warnings.warn('cupy not available - processed on CPU')
 
@@ -127,5 +137,7 @@ if __name__ == '__main__':
     parser.add_argument('--input', default='filetracker_poisoned.csv', help='Input CSV listing LiDAR files')
     parser.add_argument('--output', default='filetracker_poisoned_voxelized.csv', help='Output CSV file')
     parser.add_argument('--cpu', action='store_true', help='Force computation on CPU')
+    parser.add_argument('--batch-size', type=int, default=100,
+                        help='Number of files to process at once')
     args = parser.parse_args()
-    main(args.input, args.output, use_gpu=not args.cpu)
+    main(args.input, args.output, use_gpu=not args.cpu, batch_size=args.batch_size)

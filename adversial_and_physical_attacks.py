@@ -117,7 +117,7 @@ class VoxelizeCPU:
 
     def __curvature_reflectance_region_ratio(self)-> float:
         points=self.__pointcloud[:,:3]
-        nbr = NearestNeighbors(n_neighbors=122).fit(points)
+        nbr = NearestNeighbors(n_neighbors=122, algorithm="kd_tree").fit(points)
         _, indices = nbr.kneighbors(points)
         curvatures = []
         for i in range(len(points)):
@@ -160,7 +160,7 @@ class VoxelizeCPU:
 #%%
 df=pd.read_csv("filetracker_poisoned.csv", header=0)
 df['voxel'] = [
-    str(tuple(Voxelize(np.fromfile(fname, dtype=np.float32).reshape(-1, 4), use_gpu=True).voxel()))
+    str(tuple(Voxelize(np.fromfile(fname, dtype=np.float32).reshape(-1, 4), use_gpu=False).voxel()))
     for fname in df['filename']
 ]
 df.to_csv("filetracker_poisoned_voxelized.csv",index=False)

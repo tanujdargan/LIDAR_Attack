@@ -41,6 +41,9 @@ consisting of ~25 features. These are
 - curvature_reflectance_region_ratio
 
 After computing these values, we proceed to compute ML algorithms for the same.
+The curvature feature uses scikit-learn's `kd_tree` algorithm for the
+nearest-neighbor search, which reduces memory consumption on large
+point clouds.
 
 ## GPU Acceleration
 Voxel calculations can run on the GPU using the optional `voxelize_gpu.py` script.
@@ -57,6 +60,14 @@ python voxelize_gpu.py --input filetracker_poisoned.csv --output filetracker_poi
 ```
 
 Add `--cpu` to disable GPU usage even if CuPy is installed.
+You can also limit memory usage by processing the input CSV in batches:
+
+```bash
+python voxelize_gpu.py --cpu --batch-size 100 \
+    --input filetracker_poisoned.csv --output filetracker_poisoned_voxelized.csv
+```
+
+`--batch-size` controls how many LiDAR files are loaded at once (default 100).
 
 
 
