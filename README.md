@@ -60,6 +60,14 @@ python voxelize_gpu.py --input filetracker_poisoned.csv --output filetracker_poi
 ```
 
 Add `--cpu` to disable GPU usage even if CuPy is installed.
+You can also limit memory usage by processing the input CSV in batches:
+
+```bash
+python voxelize_gpu.py --cpu --batch-size 100 \
+    --input filetracker_poisoned.csv --output filetracker_poisoned_voxelized.csv
+```
+
+`--batch-size` controls how many LiDAR files are loaded at once (default 100).
 
 
 
