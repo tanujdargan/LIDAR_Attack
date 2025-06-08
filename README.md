@@ -41,6 +41,9 @@ consisting of ~25 features. These are
 - curvature_reflectance_region_ratio
 
 After computing these values, we proceed to compute ML algorithms for the same.
+The curvature feature uses scikit-learn's `kd_tree` algorithm for the
+nearest-neighbor search, which reduces memory consumption on large
+point clouds.
 
 ## GPU Acceleration
 Voxel calculations can run on the GPU using the optional `voxelize_gpu.py` script.
