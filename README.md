@@ -42,6 +42,22 @@ consisting of ~25 features. These are
 
 After computing these values, we proceed to compute ML algorithms for the same.
 
+## GPU Acceleration
+Voxel calculations can run on the GPU using the optional `voxelize_gpu.py` script.
+Install [CuPy](https://docs.cupy.dev/) for your CUDA version, for example:
+
+```bash
+pip install cupy-cuda12x
+```
+
+Then run the script to generate the voxelized CSV:
+
+```bash
+python voxelize_gpu.py --input filetracker_poisoned.csv --output filetracker_poisoned_voxelized.csv
+```
+
+Add `--cpu` to disable GPU usage even if CuPy is installed.
+
 
 
 ## References

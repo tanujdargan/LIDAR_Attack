@@ -12,6 +12,7 @@ import open3d as o3d
 
 from scipy.stats import *
 from astropy.stats import knuth_bin_width
+from voxelize_gpu import Voxelize
 from sklearn.neighbors import *
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, VotingClassifier
@@ -159,7 +160,7 @@ class Voxelize:
 #%%
 df=pd.read_csv("filetracker_poisoned.csv", header=0)
 df['voxel'] = [
-    str(tuple(Voxelize(np.fromfile(fname, dtype=np.float32).reshape(-1, 4)).voxel()))
+    str(tuple(Voxelize(np.fromfile(fname, dtype=np.float32).reshape(-1, 4), use_gpu=True).voxel()))
     for fname in df['filename']
 ]
 df.to_csv("filetracker_poisoned_voxelized.csv",index=False)
