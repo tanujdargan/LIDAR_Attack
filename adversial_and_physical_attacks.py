@@ -69,7 +69,7 @@ df.to_csv("filetracker_poisoned.csv",index=False)
 # ### Voxelize the data into around 20 features after converting into readable information. Write this text back into the csv file tha will store the struct.
 #%%
 # features=[x_mean, x_max, x_min, x_std, y_mean, y_std, y_min, y_max, z_mean, z_min, z_max, z_std, r_max, r_mean, r_std, r_min, kurtosis_r, skewness_in_r, percentage_outlier_r,Peak_bin_ratio_r entropy_of_r,range_x, range_y, range_z, range_r,curvature_reflectance_region_ratio]
-class Voxelize:
+class VoxelizeCPU:
     def __init__(self, pointcloud: np.ndarray):
         self.__pointcloud = pointcloud
 
