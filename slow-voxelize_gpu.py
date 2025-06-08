@@ -55,7 +55,10 @@ class Voxelize:
 
     def __entropy_r(self) -> float:
         data = self._cpu(self._pc[:, 3])
-        hist, _ = np.histogram(data, bins="auto")
+        finite_data = data[np.isfinite(data)]
+        if len(finite_data) <= 1 or np.unique(finite_data).size < 2:
+            return 0.0
+        hist, _ = np.histogram(finite_data, bins="auto")
         probs = hist / np.sum(hist)
         probs = probs[probs > 0]
         return float(entropy(probs, base=2))
@@ -79,8 +82,11 @@ class Voxelize:
 
     def __peak_bin_ratio_r(self) -> float:
         data = self._cpu(self._pc[:, 3])
-        width, bins = knuth_bin_width(data, return_bins=True)
-        hist, _ = np.histogram(data, bins=bins)
+        finite_data = data[np.isfinite(data)]
+        if len(finite_data) <= 1 or np.unique(finite_data).size < 2:
+            return 0.0
+        width, bins = knuth_bin_width(finite_data, return_bins=True)
+        hist, _ = np.histogram(finite_data, bins=bins)
         return float(np.max(hist) / np.sum(hist))
 
     def __curvature_reflectance_region_ratio_optimized(self) -> float:
