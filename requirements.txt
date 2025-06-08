@@ -122,3 +122,4 @@ websocket-client==1.8.0
 Werkzeug==3.0.6
 widgetsnbextension==4.0.13
 zipp==3.21.0
+cupy-cuda12x>=12.0  # optional, for GPU voxelization
